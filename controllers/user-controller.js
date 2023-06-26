@@ -1,49 +1,33 @@
-const { Schema, model } = require('mongoose');
+const { User, Thought } = require('../models');
 
-// Schema to create a course model
-const userSchema = new Schema(
-    {
-        username: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            match: [/.+@.+\..+/, 'Input valid email!'],
-        },
-        thoughts: {
-            type: Date,
-            default: Date.now(),
-        },
-        endDate: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Thought',
-            },
-        ],
-        friends: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-            },
-        ],
+const userController = {
+    async getUser(req, res) {
+        try {
+            const userDataDB = await User.find()
+            .select('-__v')
+
+            res.join(userDataDB);
+        }   catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
-    {
-        toJSON: {
-            virtuals: true,
-        },
-        id: false,
-    }
-);
 
-userSchema.virtual('friendCount').get(function () {
-    return this.friends.length;
-});
+    async getSingleUser(req, res) {
+        try {
+            const userDataDB = await User.findOne({ _id: req.params.userId })
+            .select('-__v')
+            .populate('friends')
+            .populate('thoughts');
 
-const User = model('User', userSchema);
+            if(!userDataDB) {
+                return res.status(404).json({ message: 'No user with this id! '});
+            }
 
-module.exports = User;
+            res.join(userDataDB);
+        }   catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+}

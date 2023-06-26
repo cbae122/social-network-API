@@ -1,46 +1,33 @@
-const { Schema, model } = require('mongoose');
-
+const { Schema, Types } = require('mongoose');
 
 // Schema to create a course model
-const userSchema = new Schema(
+const reactionSchema = new Schema(
     {
+        reactionId: {
+            type: Schema.Types.ObjectId,
+            default: () => new Types.ObjectId(),
+        },
+        reactionBody: {
+            type: String,
+            required: true,
+            maxlength: 280,
+        },
         username: {
             type: String,
-            unique: true,
             required: true,
-            trim: true,
         },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            match: [/.+@.+\..+/, 'Input valid email!'],
+        createdAt: {
+            type: Date,
+            default: Date.now,
+            get: (timestamp) => dateFormat(timestamp),
         },
-        thoughts: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Thought',
-            },
-        ],
-        friends: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-            },
-        ],
     },
     {
         toJSON: {
-            virtuals: true,
+            getters: true,
         },
         id: false,
     }
 );
 
-userSchema.virtual('friendCount').get(function () {
-    return this.friends.length;
-});
-
-const User = model('User', userSchema);
-
-module.exports = User;
+module.exports = reactionSchema;

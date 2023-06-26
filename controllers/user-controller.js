@@ -6,7 +6,7 @@ const userController = {
             const userDataDB = await User.find()
                 .select('-__v')
 
-            res.join(userDataDB);
+            res.json(userDataDB);
         } catch (err) {
             console.log(err);
             res.status(500).json(err);
@@ -24,7 +24,7 @@ const userController = {
                 return res.status(404).json({ message: 'No user with this id! ' });
             }
 
-            res.join(userDataDB);
+            res.json(userDataDB);
         } catch (err) {
             console.log(err);
             res.status(500).json(err);

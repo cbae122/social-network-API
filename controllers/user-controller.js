@@ -76,5 +76,43 @@ const userController = {
         }
     },
 
-    
-}
+    async addFriend(req, res) {
+        try {
+            const userDataDB = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $addToSet: { friends: req.params.friendId } },
+                { new: true }
+            );
+
+            if (!userDataDB) {
+                res.status(404).json({ message: 'No user with this id!' });
+            }
+
+            res.json(userDataDB);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    async removeFriend(req, res) {
+        try {
+            const userDataDB = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $pull: { friends: req.params.friendId } },
+                { new: true }
+            );
+
+            if (!userDataDB) {
+                res.status(404).json({ message: 'No user with this id!' });
+            }
+
+            res.json(userDataDB);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+};
+
+module.exports = userController;

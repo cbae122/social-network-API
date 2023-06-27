@@ -1,7 +1,7 @@
 const { User, Thought } = require('../models');
 
 const userController = {
-    async getUser(req, res) {
+    async getUsers(req, res) {
         try {
             const userDataDB = await User.find()
                 .select('-__v')

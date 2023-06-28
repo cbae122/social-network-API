@@ -3,8 +3,7 @@ const { Thought, User } = require('../models');
 const thoughtController = {
     async getThoughts(req, res) {
         try {
-            const thoughtDataDB = await Thought.find()
-                .sort({ createdAt: -1 })
+            const thoughtDataDB = await Thought.find({})
 
             res.json(thoughtDataDB);
         } catch (err) {
@@ -33,12 +32,13 @@ const thoughtController = {
             const thoughtDataDB = await Thought.create(req.body)
             const userDataDB = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $addToSet: { thoughts: createThought._id} },
-                { new: true }
+                { $addToSet: { thoughts: thoughtDataDB._id } },
             );
-            if (!userDataDB) {
-                return res.status(404).json({ message: 'Thought created but no user with this id!' });
-            }
+            // if (!userDataDB) {
+            //     return res.status(404).json({ message: 'Thought created but no user with this id!' });
+            // }
+
+            // res.status(201).json(thoughtDataDB);
             res.json({ message: 'Thought has been created!' });
         } catch (err) {
             console.log(err);
@@ -76,12 +76,8 @@ const thoughtController = {
             const userDataDB = await User.findOneAndUpdate(
                 { thoughts: req.params.thoughtId },
                 { $pull: { thoughts: req.params.thoughtId } },
-                { new: true }
-                );
+            );
 
-                if (!userDataDB) {
-                    return res.status(404).json({ message: 'Thought created but no user with this id!' });
-                }
             res.json({ message: 'Thought has been deleted!' });
         } catch (err) {
             console.log(err);

@@ -107,7 +107,9 @@ const userController = {
                 res.status(404).json({ message: 'No user with this id!' });
             }
 
+            // res.json({ message: 'Friend Deleted!' });
             res.json(userDataDB);
+
         } catch (err) {
             console.log(err);
             res.status(500).json(err);
